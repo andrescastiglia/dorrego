@@ -1,0 +1,9 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/workspaces/dorrego",
+            "binaryPath": "/workspaces/dorrego",
+            "binaryArgs": []
+        }
+    ]
+}
