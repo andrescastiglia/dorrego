@@ -5,7 +5,7 @@ ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
 RUN apt-get update -y -qq && \
-    apt-get install build-essential cmake gdb sudo -y -qq && \
+    apt-get install build-essential cmake gdb sudo openssh-client -y -qq && \
     apt-get install mpich -y -qq && \
     apt-get clean && \
     groupadd --gid $USER_GID $USERNAME && \
