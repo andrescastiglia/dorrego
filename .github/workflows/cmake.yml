@@ -21,7 +21,12 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Prerequisites
-      run: sudo apt-get update -y -qq && sudo apt-get install build-essential cmake mpich -y -qq
+      run: |
+        sudo apt-get update -y -qq && sudo apt-get install build-essential cmake ninja-build mpich llvm-dev zlib1g-dev g++ python3-dev autotools-dev libicu-dev libbz2-dev wget -y -qq
+        wget https://boostorg.jfrog.io/artifactory/main/release/1.81.0/source/boost_1_81_0.tar.gz 
+        tar xvf boost_1_81_0.tar.gz && rm boost_1_81_0.tar.gz && cd boost_1_81_0/ 
+        ./bootstrap.sh --prefix=/usr/ --with-libraries=all && echo "using mpi ;" | tee -a tools/build/src/user-config.jam && ./b2 install threading=multi link=shared
+        cd .. && rm -r -f boost_1_81_0 
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.

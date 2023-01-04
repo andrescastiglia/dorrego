@@ -1,38 +1,21 @@
+#include <boost/asio.hpp>
+#include "saver.h"
+#include "listener.h"
+#include "in_channel.h"
+
+#include <boost/mpi.hpp>
+
 #include <iostream>
-#include <cstring>
-#include <mpi/mpi.h>
+
+namespace mpi = boost::mpi;
 
 int main(int argc, char* argv[])
 {
-    MPI_Init(&argc, &argv);
+    mpi::environment env(argc, argv);
+    mpi::communicator world;
+    std::cout << "I am process " << world.rank() << " of " << world.size() << "." << std::endl;
 
-    int rank, size;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
-
-    int tag = 0;
-    char msg[20] = {};
-
-    if ( rank == 0 ) {
-
-        strcpy( msg, "hello world" );
-
-        MPI_Send(msg, strlen(msg) + 1, MPI_CHAR, 1, tag, MPI_COMM_WORLD);
-
-        std::cout << "sent " << rank << std::endl;
-
-    } else if ( rank == 1 ) {
-
-        MPI_Status status;
-
-        std::cout << "wait " << rank << std::endl;
-
-        MPI_Recv(msg, sizeof(msg), MPI_CHAR, 0, tag, MPI_COMM_WORLD, &status);
-
-        std::cout << "received " << msg << " " << rank << std::endl;
-    }
-
-    MPI_Finalize();
+    InChannel inChannel;
 
     return EXIT_SUCCESS;
 }
