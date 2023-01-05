@@ -2,15 +2,20 @@
 
 using boost::asio::awaitable;
 using boost::asio::ip::tcp;
+using boost::asio::ip::port_type;
 
 class Listener
 {
-public:
-    Listener();
-    awaitable<void> perform();
-
 private:
     awaitable<void> accept(tcp::socket _socket);
-    awaitable<void> exec(tcp::socket &_socket);
-    Saver saver;
+    awaitable<void> receive(tcp::socket &_socket);
+
+    port_type port;
+    std::function<void(Order &_order, Trade &_trade)> callback;
+
+public:
+    Listener(port_type _port, std::function<void(Order &_order, Trade &_trade)> _callback);
+    virtual ~Listener() = default;
+
+    awaitable<void> perform();
 };

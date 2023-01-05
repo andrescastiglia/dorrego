@@ -5,3 +5,29 @@
 #define DR_VERSION_PATCH @PROJECT_VERSION_PATCH @
 #define DR_VERSION_META @PROJECT_VERSION_META @
 #define DR_VERSION "@PROJECT_VERSION@"
+
+#define ORDERBOOK_SIZE (ORDER_SIZE * 1024)
+#define ORDER_SIZE sizeof(struct Order)
+
+#define TRADES_SIZE (TRADE_SIZE * 512)
+#define TRADE_SIZE sizeof(struct Trade)
+
+enum Side
+{
+    Buy,
+    Sell,
+};
+
+struct Order
+{
+    unsigned long id;
+    unsigned long amount;
+    unsigned long price;
+    Side side;
+};
+
+struct Trade
+{
+    unsigned long id_buyer;
+    unsigned long id_seller;
+};
