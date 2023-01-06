@@ -9,9 +9,7 @@ private:
 
     Orderbook &orderbook;
     Order &order;
-
-    Order matched;
-    Trade trade;
+    Trade &trade;
 
 public:
     Command(Orderbook &_orderbook, Order &_order, Trade &_trade);

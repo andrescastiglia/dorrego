@@ -24,6 +24,6 @@ public:
     static bool destroy();
 
     bool add(Order &_order);
-    bool remove(unsigned long _id, Side _side, Order &_order);
+    bool remove(unsigned long _id, Side _side);
     bool match(Order &_order, unsigned long &_id);
 };

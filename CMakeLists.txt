@@ -22,7 +22,7 @@ add_compile_options(-march=native)
 add_compile_options(-mavx2)
 add_compile_options(-ffast-math)
 
-find_package(Boost REQUIRED COMPONENTS system mpi)
+find_package(Boost REQUIRED COMPONENTS system mpi unit_test_framework)
 include_directories(${Boost_INCLUDE_DIRS}) 
 add_definitions(${Boost_DEFINITIONS})
 link_directories(${Boost_LIBRARY_PATH})
@@ -34,7 +34,14 @@ set(BOOST_USE_STATIC_RUNTIME OFF)
 set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
 set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
 
-file(GLOB SOURCES *.cpp)
-add_executable(dorrego ${SOURCES})
+file(GLOB SOURCES "*.cpp")
+list(FILTER SOURCES EXCLUDE REGEX ".*_test\\.cpp$")
 
+add_executable(dorrego ${SOURCES})
 target_link_libraries(dorrego ${Boost_LIBRARIES} ${MPI_LIBRARIES})
+
+file(GLOB TEST_SOURCES "*.cpp")
+list(FILTER TEST_SOURCES EXCLUDE REGEX "main\\.cpp")
+
+add_executable(test ${TEST_SOURCES})
+target_link_libraries(test ${Boost_LIBRARIES} ${MPI_LIBRARIES})

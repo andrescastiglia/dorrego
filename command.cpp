@@ -17,7 +17,6 @@ Command::Command(Orderbook &_orderbook, Order &_order, Trade &_trade) : orderboo
 
 void Command::execute()
 {
-
     unsigned long id_matched;
     auto opposite = this->order.side == Side::Buy ? Side::Sell : Side::Buy;
 
@@ -27,10 +26,10 @@ void Command::execute()
 
         if (this->orderbook.match(this->order, id_matched))
         {
-            if (this->orderbook.remove(id_matched, opposite, this->matched))
+            if (this->orderbook.remove(id_matched, opposite))
             {
-                this->trade.id_buyer = this->order.side == Side::Buy ? this->order.id : this->matched.id;
-                this->trade.id_seller = this->order.side == Side::Buy ? this->matched.id : this->order.id;
+                this->trade.id_buyer = this->order.side == Side::Buy ? this->order.id : id_matched;
+                this->trade.id_seller = this->order.side == Side::Buy ? id_matched : this->order.id;
 
                 return;
             }

@@ -33,7 +33,7 @@ bool Orderbook::add(Order &_order)
     return result.second;
 }
 
-bool Orderbook::remove(unsigned long _id, Side _side, Order &_order)
+bool Orderbook::remove(unsigned long _id, Side _side)
 {
     auto item = this->orderbook[_side]->get<by_id>().find(_id);
     if (item == this->orderbook[_side]->get<by_id>().end())
@@ -41,7 +41,7 @@ bool Orderbook::remove(unsigned long _id, Side _side, Order &_order)
         return false;
     }
 
-    _order = *this->orderbook[_side]->erase(item);
+    this->orderbook[_side]->erase(item);
 
     return true;
 }
