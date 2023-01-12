@@ -11,14 +11,19 @@
 #define PURCHASES_CONTAINER "PurchasesContainer"
 #define SALES_CONTAINER "SalesContainer"
 
+using namespace dorrego;
+
 Orderbook::Orderbook()
 {
     this->segment = managed_shared_memory(open_or_create, ORDERBOOK_SEGMENT, ORDERBOOK_SIZE);
 
     auto allocator = this->segment.get_allocator<Order>();
 
-    this->orderbook[Side::Buy] = this->segment.find_or_construct<OrderbookContainer>(PURCHASES_CONTAINER)(allocator);
-    this->orderbook[Side::Sell] = this->segment.find_or_construct<OrderbookContainer>(SALES_CONTAINER)(allocator);
+    for (auto currency = 0; currency < MAX_CURRENCY; currency++)
+    {
+        this->orderbook[currency][Side::Buy] = this->segment.find_or_construct<OrderbookContainer>(PURCHASES_CONTAINER)(allocator);
+        this->orderbook[currency][Side::Sell] = this->segment.find_or_construct<OrderbookContainer>(SALES_CONTAINER)(allocator);
+    }
 }
 
 bool Orderbook::destroy()
@@ -28,30 +33,28 @@ bool Orderbook::destroy()
 
 bool Orderbook::add(Order &_order)
 {
-    auto result = this->orderbook[_order.side]->insert(_order);
+    auto result = this->orderbook[_order.currency][_order.side]->insert(_order);
 
     return result.second;
 }
 
-bool Orderbook::remove(unsigned long _id, Side _side)
+bool Orderbook::remove(ID _id, CURRENCY _currency, Side _side)
 {
-    auto item = this->orderbook[_side]->get<by_id>().find(_id);
-    if (item == this->orderbook[_side]->get<by_id>().end())
-    {
+    auto item = this->orderbook[_currency][_side]->get<by_id>().find(_id);
+    if (item == this->orderbook[_currency][_side]->get<by_id>().end())
         return false;
-    }
 
-    this->orderbook[_side]->erase(item);
+    this->orderbook[_currency][_side]->erase(item);
 
     return true;
 }
 
-bool Orderbook::match(Order &_order, unsigned long &_id)
+bool Orderbook::match(Order &_order, ID &_id)
 {
     if (_order.side == Side::Buy)
     {
-        auto sale = this->orderbook[Side::Sell]->get<by_price>().begin();
-        if (sale != this->orderbook[Side::Sell]->get<by_price>().end())
+        auto sale = this->orderbook[_order.currency][Side::Sell]->get<by_price>().begin();
+        if (sale != this->orderbook[_order.currency][Side::Sell]->get<by_price>().end())
         {
             if (_order.price >= sale->price)
             {
@@ -62,15 +65,15 @@ bool Orderbook::match(Order &_order, unsigned long &_id)
     }
     else
     {
-        auto purchase = this->orderbook[Side::Buy]->get<by_price>().find(_order.price);
-        if (purchase != this->orderbook[Side::Buy]->get<by_price>().end())
+        auto purchase = this->orderbook[_order.currency][Side::Buy]->get<by_price>().find(_order.price);
+        if (purchase != this->orderbook[_order.currency][Side::Buy]->get<by_price>().end())
         {
             _id = purchase->id;
             return true;
         }
 
-        purchase = this->orderbook[Side::Buy]->get<by_price>().upper_bound(_order.price);
-        if (purchase != this->orderbook[Side::Buy]->get<by_price>().end())
+        purchase = this->orderbook[_order.currency][Side::Buy]->get<by_price>().upper_bound(_order.price);
+        if (purchase != this->orderbook[_order.currency][Side::Buy]->get<by_price>().end())
         {
             _id = purchase->id;
             return true;

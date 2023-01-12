@@ -1,19 +1,34 @@
 #pragma once
 
-using boost::interprocess::interprocess_mutex;
+#define MUTEX_NAME "DorregoMutex"
 
-class Command
+namespace dorrego
 {
-private:
-    interprocess_mutex mutex;
+    using boost::interprocess::named_mutex;
+    using boost::interprocess::open_or_create;
 
-    Orderbook &orderbook;
-    Order &order;
-    Trade &trade;
+    template <typename BOOK = Book, typename REQUEST = Request, typename RESPONSE = Response>
+    class Command
+    {
+    private:
+        named_mutex mutex;
 
-public:
-    Command(Orderbook &_orderbook, Order &_order, Trade &_trade);
-    virtual ~Command() = default;
+        BOOK &book;
+        REQUEST &request;
+        RESPONSE &response;
 
-    void execute();
-};
+    public:
+        Command(BOOK &_book, REQUEST &_request, RESPONSE &_response)
+            : mutex(named_mutex(open_or_create, MUTEX_NAME)), book(_book), request(_request), response(_response)
+        {
+        }
+
+        virtual ~Command() = default;
+
+        void execute()
+        {
+            std::cerr << "Command not implemented" << std::endl
+                      << std::flush;
+        }
+    };
+}
