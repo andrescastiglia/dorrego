@@ -51,7 +51,8 @@ BOOST_AUTO_TEST_CASE(remove_order)
   Order order(3, 3, 1, 100, 1, Side::Buy);
   BOOST_TEST(orderbook.add(order), "Failed to add to Orderbook");
 
-  BOOST_TEST(orderbook.remove(3, 1, Side::Buy), "Failed to remove");
+  Order out;
+  BOOST_TEST(orderbook.take(3, 1, Side::Buy, out), "Failed to remove");
 }
 
 BOOST_AUTO_TEST_CASE(not_remove_order)
@@ -61,9 +62,10 @@ BOOST_AUTO_TEST_CASE(not_remove_order)
   Order order(4, 4, 1, 100, 1, Side::Buy);
   BOOST_TEST(orderbook.add(order));
 
-  BOOST_TEST(!orderbook.remove(5, 1, Side::Buy), "Unexpected remove");
-  BOOST_TEST(!orderbook.remove(4, 1, Side::Sell), "Unexpected remove");
-  BOOST_TEST(!orderbook.remove(5, 1, Side::Sell), "Unexpected remove");
+  Order out;
+  BOOST_TEST(!orderbook.take(5, 1, Side::Buy, out), "Unexpected remove");
+  BOOST_TEST(!orderbook.take(4, 1, Side::Sell, out), "Unexpected remove");
+  BOOST_TEST(!orderbook.take(5, 1, Side::Sell, out), "Unexpected remove");
 }
 
 BOOST_AUTO_TEST_CASE(match)

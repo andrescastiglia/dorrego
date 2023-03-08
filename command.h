@@ -1,7 +1,5 @@
 #pragma once
 
-#define MUTEX_NAME "DorregoMutex"
-
 namespace dorrego
 {
     using boost::interprocess::named_mutex;
@@ -11,23 +9,27 @@ namespace dorrego
     class Command
     {
     private:
-        named_mutex mutex;
+        char *mutex_name;
+        bool succeeded;
+        short phase;
 
         BOOK &book;
         REQUEST &request;
         RESPONSE &response;
 
     public:
-        Command(BOOK &_book, REQUEST &_request, RESPONSE &_response)
-            : mutex(named_mutex(open_or_create, MUTEX_NAME)), book(_book), request(_request), response(_response)
-        {
-        }
-
-        virtual ~Command() = default;
+        Command(BOOK &_book, REQUEST &_request, RESPONSE &_response);
+        virtual ~Command();
 
         void execute()
         {
             std::cerr << "Command not implemented" << std::endl
+                      << std::flush;
+        }
+
+        void rollback()
+        {
+            std::cerr << "Rollback not implemented" << std::endl
                       << std::flush;
         }
     };

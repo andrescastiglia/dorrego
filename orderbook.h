@@ -34,6 +34,7 @@ namespace dorrego
         Trade() = default;
         ID order_id_buyer;
         ID order_id_seller;
+        AMOUNT amount;
     };
 
     typedef boost::multi_index_container<
@@ -57,7 +58,7 @@ namespace dorrego
         static bool destroy();
 
         bool add(Order &_order);
-        bool remove(ID _id, CURRENCY _currency, Side _side);
-        bool match(Order &_order, ID &_id);
+        bool take(ID _id, CURRENCY _currency, Side _side, Order &_order);
+        bool match(Order &_order, Order &_matched);
     };
 }

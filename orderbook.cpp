@@ -38,18 +38,18 @@ bool Orderbook::add(Order &_order)
     return result.second;
 }
 
-bool Orderbook::remove(ID _id, CURRENCY _currency, Side _side)
+bool Orderbook::take(ID _id, CURRENCY _currency, Side _side, Order &_order)
 {
     auto item = this->orderbook[_currency][_side]->get<by_id>().find(_id);
     if (item == this->orderbook[_currency][_side]->get<by_id>().end())
         return false;
 
-    this->orderbook[_currency][_side]->erase(item);
+    _order = *this->orderbook[_currency][_side]->erase(item);
 
     return true;
 }
 
-bool Orderbook::match(Order &_order, ID &_id)
+bool Orderbook::match(Order &_order, Order &_matched)
 {
     if (_order.side == Side::Buy)
     {
@@ -58,7 +58,7 @@ bool Orderbook::match(Order &_order, ID &_id)
         {
             if (_order.price >= sale->price)
             {
-                _id = sale->id;
+                _matched = *sale;
                 return true;
             }
         }
@@ -68,14 +68,14 @@ bool Orderbook::match(Order &_order, ID &_id)
         auto purchase = this->orderbook[_order.currency][Side::Buy]->get<by_price>().find(_order.price);
         if (purchase != this->orderbook[_order.currency][Side::Buy]->get<by_price>().end())
         {
-            _id = purchase->id;
+            _matched = *purchase;
             return true;
         }
 
         purchase = this->orderbook[_order.currency][Side::Buy]->get<by_price>().upper_bound(_order.price);
         if (purchase != this->orderbook[_order.currency][Side::Buy]->get<by_price>().end())
         {
-            _id = purchase->id;
+            _matched = *purchase;
             return true;
         }
     }
