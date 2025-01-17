@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.menu-item {
+    @apply px-4 py-2 rounded-lg transition-colors duration-200 hover:bg-opacity-90;
+}
+
+.primary-button {
+    @apply bg-primary text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors duration-200;
+}
+
+.secondary-button {
+    @apply bg-secondary text-gray-700 px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors duration-200;
+}
+
+.bg-pattern {
+    background-image: url('background.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+     position: relative;
+}
+
+.bg-pattern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: inherit;
+  filter: blur(3px);
+  z-index: -1;
+}
+
+.content-overlay {
+    @apply bg-white/90 backdrop-blur-sm;
+}

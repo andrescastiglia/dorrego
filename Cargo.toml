@@ -1,0 +1,21 @@
+[package]
+name = "dorrego"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+yew = { version = "0.21.0", features = ["csr"] }
+yew-router = { version = "0.18.0" }
+reqwest = { version = "0.12.12", features = ["json"] }
+serde = { version = "1.0.217", features = ["derive"] }
+console_error_panic_hook = "0.1.7"
+wasm-bindgen-futures = "0.4.50"
+wasm-logger = "0.2.0"
+log = "0.4.25"
+
+[profile.release]
+panic = 'abort'
+codegen-units = 1
+opt-level = 'z'
+# opt-level = 's'
+lto = true
