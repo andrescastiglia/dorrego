@@ -45,6 +45,6 @@ jobs:
     - name: Attestation
       uses: actions/attest-build-provenance@v2
       with:
-        subject-name: acastiglia/dorrego
+        subject-name: docker.io/acastiglia/dorrego
         subject-digest: ${{ steps.push.outputs.digest }}
         push-to-registry: true
